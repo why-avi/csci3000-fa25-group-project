@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transactions | Budget Tracker</title>
+</head>
+<body>
+    <header>
+        <h1>Budget Tracker</h1>
+        <nav>
+      <a href="index.html">Home</a> |
+      <a href="transactions.html">Transactions</a> |
+      <a href="budgets.html">Budgets</a> |
+      <a href="reports.html">Reports</a>
+    </nav>
+    </header>
+    <main>
+        <h2>Add a transaction</h2>
+        <!-- Form for the transactions -->
+        <form id = "transactionForm">
+            <label for = "type">Type:</label>
+            <select id="type" required>
+                <option value="">--Select--</option>
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+        </select>
+        <br><br>
+
+        <label for="category">Category</label>
+        <input type="text" id="category" placeholder="ex. Groceries, Fun, Utilities" required/>
+        <br><br>
+
+        <label for="description">Description</label>
+        <input type="text" id="description" placeholder="Specifics" required/>
+        <br><br>
+
+        <label for="date">Transaction Date</label>
+        <input type="date" id="date" required/>
+        <br><br>
+
+        <label for="amount">Amount of $</label>
+        <input type="number" id="amount" step="0.01" required/>
+        <br><br>
+
+        <button type="submit">Add Transaction</button>
+        </form> 
+
+        <hr>
+
+        <h3>Transaction History: </h3>
+        <!--Table -->
+        <table border="1" id="transactionTable">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Amount ($)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--Transactions will appear here-->
+            </tbody>
+        </table>
+        <h3>Current Balance: $<span id="balance">0.00</span></h3>
+    </main>
+
+    <script>
+        
+    </script>
+</body>
+</html>
