@@ -53,9 +53,6 @@ function setBudgets(budgets) {
     // TODO: Save budget object array to localStorage. No return value.
 }
 
-
-/* ======================== Mutators ======================== */ 
-
 // Adds transaction to transactions array and save to localStorage
 function addTransaction(transaction) {
     let transactions = getTransactions();
@@ -67,6 +64,9 @@ function addTransaction(transaction) {
 function addBudget(budget) {
     // TODO: Add budget to object array and save to localStorage, no return value.
 }
+
+/* ======================== Mutators ======================== */ 
+
 
 // Updates a transaction to have new data.
 function editTransaction(id, transaction) {
