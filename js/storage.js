@@ -31,6 +31,11 @@ function getBudgets() {
     // TODO: Return parsed JSON array of budget objects. returns array
 }
 
+// Get all categories array
+function getCategories() {
+
+}
+
 // TODO: Functions to find budget and transaction arrays by id.
 
 function getTransaction(id) {
@@ -45,25 +50,31 @@ function getBudget(id) {
 
 // Save transactions array to localStorage
 function setTransactions(transactions) {
-    // TODO: Save transaction object array to localStorage. No return value.
+    // TODO: Save transaction object array to localStorage. No return value. Checks if category exists.
 }
 
 // Save budgets array to localStorage
 function setBudgets(budgets) {
-    // TODO: Save budget object array to localStorage. No return value.
+    // TODO: Save budget object array to localStorage. No return value. Checks if category exists.
+}
+
+// Save categories array to localStorage, no return value.
+function setCategories(categories) {
+
 }
 
 // Adds transaction to transactions array and save to localStorage
 function addTransaction(transaction) {
     let transactions = getTransactions();
     
-    // TODO: add transaction to object array and save to localStorage, no return value.
+    // TODO: add transaction to object array and save to localStorage, no return value. Checks if category exists.
 }
 
 // Add budget to budgets array and save to localStorage
 function addBudget(budget) {
-    // TODO: Add budget to object array and save to localStorage, no return value.
+    // TODO: Add budget to object array and save to localStorage, no return value. Checks if category exists.
 }
+
 
 /* ======================== Mutators ======================== */ 
 
@@ -78,6 +89,7 @@ function editTransaction(id, transaction) {
 function editBudget(id, budget) {
     // TODO: Search by id, set original budget values to new values, save to localStorage, no return value.
 }
+
 
 // Deletes a transaction from localStorage by id
 function deleteTransaction(id) {
