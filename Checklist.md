@@ -1,14 +1,14 @@
 # Checklist
 Checklist to track our progress and requirements for each page.
 - Homepage - *Tyler Stanton*
-	- [ ] Style CSS
+	- [x] Style CSS
 	- [ ] Simple Dashboard: (stretch goal?)
 		- [ ] Total expenses
 		- [ ] Total Income
 		- [ ] Current balance
 		- [ ] Quick link to add transaction.
 		- [ ] One or two budgets (near limit)
-	- [ ] About/Promo Section
+	- [~] About/Promo Section
 - Transactions - *Jack Ellis*
 	- [ ] Add transaction form:
 		- [ ] Inputs:

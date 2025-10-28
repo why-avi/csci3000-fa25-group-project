@@ -20,7 +20,7 @@ body {
     display: flex;
     height: 100vh;
     overflow: hidden;
-    
+    margin: 0;
 }
 
 a:link {
@@ -31,7 +31,9 @@ svg {
     stroke: var(--color-00);
 }
 
-/* Sidebar Styling */
+/* Sidebar Styling 
+ * This side bar is consistant across each page.
+ */
 .sidebar {
     margin: 0;
     padding: 0;
@@ -95,7 +97,9 @@ svg {
     stroke: var(--color-accent)
 }
 
-/* Sidebar Navigiation */
+/* Sidebar Navigiation 
+ * Styling the navigation links inside sidebar
+ */
 
 .sidebar-nav {
     display: flex;
@@ -155,6 +159,26 @@ svg {
 /* Main Body Content */
 .main {
     flex-grow: 1;
-    padding: 2rem;
     background: var(--color-90);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+.content {
+    padding: 2rem;
 }
+
+/* Footer */ 
+
+footer {
+    border-top: 2px solid var(--color-30);
+    padding: 1rem 0;
+    text-align: center;
+    color: var(--color-20);
+    font-size: 0.9rem;
+    margin-top: 2rem;
+    
+}
+
+
+/* Add Individual Page CSS here */
