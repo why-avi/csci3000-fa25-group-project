@@ -163,6 +163,7 @@ svg {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
 
 .content {
     padding: 2rem;
