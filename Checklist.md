@@ -22,7 +22,7 @@ Checklist to track our progress and requirements for each page.
 	- [ ] Edit/Delete Existing transactions.
 	- [ ] CSS Styling.
 - Budgets - *Tomas Karounas*
-	- Budgets are linked to transactions via categories. Basically
+	- Budgets are linked to transactions via categories.
 	- [ ] Add budget form:
 		- [ ] Inputs:
 			- [ ] Category (list existing, add new.)
