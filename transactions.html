@@ -6,6 +6,7 @@
         <link href="css/style.css" rel="stylesheet">
         <script src="https://unpkg.com/lucide@latest"></script>  <!-- Lucide Icons integration -->
         <script src="js/main.js" defer></script>
+        <script src="js/storage.js"></script>
         <title>Transactions | Budget Tracker</title>
         <style>
             header {
@@ -122,50 +123,14 @@
     </main>
 
     <script>
-        // Getters and Setters for Local Storage 
-        /* Retrieves the array of transaction data from localStorage
-            if no transaction data is avalible: returns an empty array
-        */
-        function getTransactions(){
-            const data = localStorage.getItem("transactions")
-            return data ? JSON.parse(data) : []
-        }
-        /* Saves transaction data to localStorage
-            turns the array into a JSON object before storing it 
-        */
-        function setTransactions(transactions){
-            localStorage.setItem("transactions", JSON.stringify(transactions))
-        }
-        /* Adds a single transaction to the exsisting list of transactions in localStorage
-            retrieves the current array, appeneds the new data, saves the updated array
-        */
-        function addTransaction(transaction){
-            const transactions = getTransactions()
-            transactions.push(transaction)
-            setTransactions(transactions)
-        }
-        /* removes a transaction from localStorage by ID
-            Filters out transactions by ID and saves the remaining array
-        */
-        function deleteTransaction(id){
-            const transactions = getTransactions().filter(t => t.id !== id)
-            setTransactions(transactions)
-        }
-        /* Updates exsisting transaction data in localStorage
-            searches for data by ID, then replaces the old data with the new object data
-        */
-        function editTransaction(id, newData){
-            const transactions = getTransactions().map(t => t.id === id ? {...t, ...newData} : t)
-            setTransactions(transactions)
-        }
-
         // DOM and Event Logic
         const form = document.getElementById("transactionForm")
         const tableBody = document.getElementById("transactionTableBody")
         //Load all transactions 
-        document.addEventListener("DOMContentLoaded",loadTransactions)
+        document.addEventListener("DOMContentLoaded", loadTransactions)
 
         form.addEventListener("submit", function(event){
+            console.log("Button Pushed")
             event.preventDefault()
             const type = document.getElementById("type").value
             const category = document.getElementById("category").value.trim()
@@ -189,7 +154,7 @@
 
             addTransaction(transaction)
             form.reset()
-            loadTransactions()
+            getTransactions()
         })
         function loadTransactions() {
             const transactions = getTransactions()
@@ -218,7 +183,7 @@
         function handleDelete(id){
             if(confirm("Delete this transaction?")){
                 deleteTransaction(id)
-                loadTransactions()
+                getTransactions()
             }
         }
         function handleEdit(id){
@@ -243,7 +208,7 @@
                 transaction.amount = parseFloat(document.getElementById("amount").value)
                 editTransaction(id, transaction)
                 form.reset()
-                loadTransactions()
+                getTransactions()
                 form.onsubmit = null
             }
         }

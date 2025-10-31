@@ -20,6 +20,12 @@ description: string
  [category, category1, category2]
 */
 
+ if (storageAvailable("localStorage")) {
+  console.log("Storage works");
+} else {
+  console.log("localStorage not available.");
+}
+
 
 /* ======================== Getters ======================== */ 
 
