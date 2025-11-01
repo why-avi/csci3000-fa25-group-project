@@ -1,53 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="css/style.css" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script> <!-- Lucide Icons -->
   <title>Budgets | Budget Tracker</title>
-  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+  <!-- Sidebar navigation -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <button class="menu-button" id="menu-button"><i data-lucide="menu"></i></button>
+      <div class="sidebar-title">
+        <i data-lucide="piggy-bank"></i>
+        <h1>Budget Tracker</h1>            
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <a href="index.html"><i data-lucide="home"></i><span>Home</span></a> 
+      <a href="transactions.html"><i data-lucide="receipt"></i><span>Transactions</span></a> 
+      <a class="current" href="budgets.html"><i data-lucide="wallet"></i><span>Budgets</span></a> 
+      <a href="reports.html"><i data-lucide="chart-line"></i><span>Reports</span></a>
+    </div>
+  </div>
 
-  <!-- Sidebar / Navigation (main.js will handle icons & layout) -->
-  <nav id="sidebar">
-    <a href="index.html">🏠 Home</a>
-    <a href="transactions.html">💸 Transactions</a>
-    <a href="budgets.html" class="active">📊 Budgets</a>
-    <a href="reports.html">📈 Reports</a>
-  </nav>
-
-  <main>
-    <header>
+  <!-- Main content -->
+  <div class="main">
+    <div class="content">
       <h1>Budgets</h1>
-    </header>
 
-    <!-- Add Budget Form -->
-    <section id="add-budget-section">
-      <h2>Add New Budget</h2>
-      <form id="budget-form">
-        <label for="budget-category">Category:</label>
-        <input type="text" id="budget-category" placeholder="e.g. Food, Rent" required>
+      <section id="add-budget-section">
+        <h2>Add New Budget</h2>
+        <form id="budget-form">
+          <label for="budget-category">Category:</label>
+          <input type="text" id="budget-category" required>
 
-        <label for="budget-limit">Spending Limit ($):</label>
-        <input type="number" id="budget-limit" placeholder="e.g. 500" required min="0">
+          <label for="budget-limit">Limit ($):</label>
+          <input type="number" id="budget-limit" required min="0">
 
-        <label for="budget-description">Description (optional):</label>
-        <input type="text" id="budget-description" placeholder="Short note about this budget">
+          <label for="budget-description">Description:</label>
+          <input type="text" id="budget-description">
 
-        <button type="submit">Add Budget</button>
-      </form>
-    </section>
+          <button type="submit">Add Budget</button>
+        </form>
+      </section>
 
-    <!-- Budget List -->
-    <section id="budget-list-section">
-      <h2>All Budgets</h2>
-      <ul id="budget-list"></ul>
-    </section>
-  </main>
+      <section id="budget-list-section">
+        <h2>All Budgets</h2>
+        <ul id="budget-list"></ul>
+      </section>
+    </div>
 
-  <!-- ✅ Scripts must be in this order -->
+    <footer>
+      <p>Created by Clark Serecky, Jack Ellis, Tomas Karounas and Tyler Stanton | CSCI 3000 - 2025</p> 
+    </footer>
+  </div>
+
+  <!-- Scripts (in correct order) -->
   <script src="js/storage.js"></script>
-  <script src="js/main.js"></script> <!-- Sidebar + icons handled here -->
-  <script src="js/budget.js"></script> <!-- Budget page logic -->
+  <script src="js/budget.js"></script>
+  <script src="js/main.js" defer></script>
 </body>
 </html>
