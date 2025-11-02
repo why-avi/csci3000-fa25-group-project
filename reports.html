@@ -3,156 +3,105 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <link href="css/style.css" rel="stylesheet">
-    <script src="js/main.js" defer></script>
-    <script src="https://unpkg.com/lucide@latest"></script>  <!-- Lucide Icons integration -->
     <title>Budget Tracker — Starter</title>
 
     <!-- Quick UI: Bootstrap for layout + simple styles -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 
-    <style>
-
-        .card { margin-bottom: 1rem; }
-        .table td, .table th { vertical-align: middle; }
-        .muted { color: #6c757d; font-size: .9rem; }
-    </style>
 </head>
 <body>
-        <!-- Sidebar navigation -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-head">
-            <button class="menu-button" id="menu-button"><i data-lucide="menu"></i></button>
-            <div class="sidebar-title">
-                <i data-lucide="piggy-bank"></i>
-                <h1>Budget Tracker</h1>            
+    <div id="app" class="container">
+        <header class="mb-4">
+            <h1 class="h3">Budget Tracker — Starter</h1>
+            <div class="mt-2 d-flex gap-2">
+                <a href="index.html" class="btn btn-outline-primary btn-sm">Home</a>
+                <a href="transactions.html" class="btn btn-outline-secondary btn-sm">Transactions</a>
+                <a href="budgets.html" class="btn btn-outline-success btn-sm">Budgets</a>
+            </div>
+        </header>
+
+        <!-- Summary -->
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="card p-3">
+                    <div>Total Income</div>
+                    <h3 class="mb-0 text-success">{{ formatCurrency(totalIncome) }}</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3">
+                    <div>Total Expenses</div>
+                    <h3 class="mb-0 text-danger">{{ formatCurrency(totalExpenses) }}</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3">
+                    <div>Remaining (Income − Expenses)</div>
+                    <h3 class="mb-0" :class="remaining >= 0 ? 'text-primary' : 'text-danger'">{{ formatCurrency(remaining) }}</h3>
+                </div>
             </div>
         </div>
-        <div class="sidebar-nav">
-            <a href="index.html"><i data-lucide="home"></i><span>Home</span></a> 
-            <a href="transactions.html"><i data-lucide="receipt"></i><span>Transactions</span></a> 
-            <a href="budgets.html"><i data-lucide="wallet"></i><span>Budgets</span></a> 
-            <a class="current" href="reports.html"><i data-lucide="chart-line"></i><span>Reports</span></a>
+
+        <!-- Reports View -->
+        <div class="row">
+            <!-- Budgets Summary -->
+            <div class="col-lg-4">
+                <div class="card p-3">
+                    <h5>Budget Summary</h5>
+                    <table class="table table-sm mt-3">
+                        <thead>
+                            <tr><th>Category</th><th class="text-end">Amount</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="b in budgets" :key="b.id">
+                                <td>{{ b.name }}</td>
+                                <td class="text-end">{{ formatCurrency(b.amount) }}</td>
+                            </tr>
+                            <tr v-if="budgets.length===0"><td colspan="2" class="text-muted">No budgets yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Income Summary -->
+            <div class="col-lg-4">
+                <div class="card p-3">
+                    <h5>Income Summary</h5>
+                    <table class="table table-sm mt-3">
+                        <thead><tr><th>Source</th><th class="text-end">Amount</th></tr></thead>
+                        <tbody>
+                            <tr v-for="i in incomes" :key="i.id">
+                                <td>{{ i.source }}</td>
+                                <td class="text-end">{{ formatCurrency(i.amount) }}</td>
+                            </tr>
+                            <tr v-if="incomes.length===0"><td colspan="2" class="text-muted">No incomes yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Expense Summary -->
+            <div class="col-lg-4">
+                <div class="card p-3">
+                    <h5>Expense Summary</h5>
+                    <table class="table table-sm mt-3">
+                        <thead><tr><th>Description</th><th class="text-end">Amount</th></tr></thead>
+                        <tbody>
+                            <tr v-for="e in expenses" :key="e.id">
+                                <td>{{ e.desc }}</td>
+                                <td class="text-end">{{ formatCurrency(e.amount) }}</td>
+                            </tr>
+                            <tr v-if="expenses.length===0"><td colspan="2" class="text-muted">No expenses yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+
+        
     </div>
 
-    <main class="main">
-        <div class="content">
-            <div id="app" class="container">
-                <header class="mb-4">
-                    <h1 class="h3">Budget Tracker — Starter</h1>
-                </header>
-
-                <!-- Summary -->
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <div class="card p-3">
-                            <div>Total Income</div>
-                            <h3 class="mb-0 text-success">{{ formatCurrency(totalIncome) }}</h3>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card p-3">
-                            <div>Total Expenses</div>
-                            <h3 class="mb-0 text-danger">{{ formatCurrency(totalExpenses) }}</h3>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card p-3">
-                            <div>Remaining (Income − Expenses)</div>
-                            <h3 class="mb-0" :class="remaining >= 0 ? 'text-primary' : 'text-danger'">{{ formatCurrency(remaining) }}</h3>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Controls -->
-                <div class="row">
-                    <!-- Budgets -->
-                    <div class="col-lg-4">
-                        <div class="card p-3">
-                            <h5>Budgets</h5>
-                            <form @submit.prevent="addBudget">
-                                <div class="mb-2">
-                                    <input v-model="budgetForm.name" class="form-control" placeholder="Category (e.g., Groceries)" required>
-                                </div>
-                                <div class="mb-2">
-                                    <input v-model.number="budgetForm.amount" class="form-control" type="number" min="0" step="0.01" placeholder="Monthly budget" required>
-                                </div>
-                                <div class="d-grid">
-                                    <button class="btn btn-outline-primary btn-sm" type="submit">Add Budget</button>
-                                </div>
-                            </form>
-
-                            <table class="table table-sm mt-3">
-                                <thead>
-                                    <tr><th>Category</th><th class="text-end">Amount</th><th></th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(b, i) in budgets" :key="b.id">
-                                        <td>{{ b.name }}</td>
-                                        <td class="text-end">{{ formatCurrency(b.amount) }}</td>
-                                        <td class="text-end"><button class="btn btn-link btn-sm text-danger" @click="removeBudget(i)">Remove</button></td>
-                                    </tr>
-                                    <tr v-if="budgets.length===0"><td colspan="3" class="text-muted">No budgets yet</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Incomes -->
-                    <div class="col-lg-4">
-                        <div class="card p-3">
-                            <h5>Incomes</h5>
-                            <form @submit.prevent="addIncome">
-                                <div class="mb-2"><input v-model="incomeForm.source" class="form-control" placeholder="Source (e.g., Salary)" required></div>
-                                <div class="mb-2"><input v-model.number="incomeForm.amount" class="form-control" type="number" min="0" step="0.01" placeholder="Amount" required></div>
-                                <div class="d-grid"><button class="btn btn-outline-success btn-sm" type="submit">Add Income</button></div>
-                            </form>
-
-                            <table class="table table-sm mt-3">
-                                <thead><tr><th>Source</th><th class="text-end">Amount</th><th></th></tr></thead>
-                                <tbody>
-                                    <tr v-for="(i,k) in incomes" :key="i.id">
-                                        <td>{{ i.source }}</td>
-                                        <td class="text-end">{{ formatCurrency(i.amount) }}</td>
-                                        <td class="text-end"><button class="btn btn-link btn-sm text-danger" @click="removeIncome(k)">Remove</button></td>
-                                    </tr>
-                                    <tr v-if="incomes.length===0"><td colspan="3" class="text-muted">No incomes yet</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Expenses -->
-                    <div class="col-lg-4">
-                        <div class="card p-3">
-                            <h5>Expenses</h5>
-                            <form @submit.prevent="addExpense">
-                                <div class="mb-2"><input v-model="expenseForm.desc" class="form-control" placeholder="Description (e.g., Rent)" required></div>
-                                <div class="mb-2"><input v-model.number="expenseForm.amount" class="form-control" type="number" min="0" step="0.01" placeholder="Amount" required></div>
-                                <div class="d-grid"><button class="btn btn-outline-danger btn-sm" type="submit">Add Expense</button></div>
-                            </form>
-
-                            <table class="table table-sm mt-3">
-                                <thead><tr><th>Description</th><th class="text-end">Amount</th><th></th></tr></thead>
-                                <tbody>
-                                    <tr v-for="(e, idx) in expenses" :key="e.id">
-                                        <td>{{ e.desc }}</td>
-                                        <td class="text-end">{{ formatCurrency(e.amount) }}</td>
-                                        <td class="text-end"><button class="btn btn-link btn-sm text-danger" @click="removeExpense(idx)">Remove</button></td>
-                                    </tr>
-                                    <tr v-if="expenses.length===0"><td colspan="3" class="text-muted">No expenses yet</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <footer>
-            <p>Created by Clark Serecky, Jack Ellis, Tomas Karounas and Tyler Stanton | CSCI 3000 - 2025</p> 
-        </footer>
-    </main>
     <!-- Vue 3 CDN -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script>
