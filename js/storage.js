@@ -125,6 +125,15 @@ function addBudget(budget) {
   }
 }
 
+// Not sure why this was removed without removing any calls made to it. If it's duplicate, leave it until calls are taken care of.
+function addCategory(category) {
+    let categories = getCategories();
+    categories.push(category);
+    setCategories(categories);
+}
+
+
+
 
 /* ======================== Mutators ======================== */ 
 
