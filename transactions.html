@@ -4,9 +4,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="css/style.css" rel="stylesheet">
-        <script src="https://unpkg.com/lucide@latest"></script>  <!-- Lucide Icons integration -->
-        <script src="js/main.js" defer></script>
-        <script src="js/storage.js"></script>
         <title>Transactions | Budget Tracker</title>
         <style>
             header {
@@ -120,103 +117,10 @@
         <footer>
             <p>Created by Clark Serecky, Jack Ellis, Tomas Karounas and Tyler Stanton | CSCI 3000 - 2025</p> 
         </footer>
+        <script src="https://unpkg.com/lucide@latest"></script>  <!-- Lucide Icons integration -->
+        <script src="js/main.js" defer></script>
+        <script src="js/storage.js"></script>
+        <script src="js/transactions.js"></script>
     </main>
-
-    <script> // TODO:  Move me to transactions.js
-        // DOM and Event Logic
-        const form = document.getElementById("transactionForm")
-        const tableBody = document.getElementById("transactionTableBody")
-        //Load all transactions 
-        document.addEventListener("DOMContentLoaded", loadTransactions)
-
-
-        // TODO: Update table without requiring page refresh.
-        form.addEventListener("submit", function(event){
-            console.log("Button Pushed")
-            event.preventDefault()
-            const type = document.getElementById("type").value
-            const category = document.getElementById("category").value.trim()
-            const description = document.getElementById("description").value.trim()
-            const date = document.getElementById("date").value
-            const amount = parseFloat(document.getElementById("amount").value)
-
-            if(!category || isNaN(amount) || !date){
-                alert("Please fill out all required fields. ")
-                return
-            }
-
-            const transaction = {
-                id: Date.now(),
-                type,
-                category,
-                description,
-                date,
-                amount
-            }
-
-            addTransaction(transaction)
-            form.reset()
-            getTransactions()
-        })
-        function loadTransactions() {
-            const transactions = getTransactions()
-            tableBody.innerHTML = ""
-
-            if (transactions.length === 0 ){
-                tableBody.innerHTML = "<tr><td colspan='6'>No transactions yet.</td></tr>"
-                return
-            }
-            transactions.forEach(t => {
-                const row = document.createElement("tr")
-                row.innerHTML = `
-                    <td>${t.type}</td>
-                    <td>${t.category}</td>
-                    <td>${t.description || "-"}</td>
-                    <td>${t.date}</td>
-                    <td>$${t.amount.toFixed(2)}</td>
-                    <td class="actions">
-                    <button onclick="handleEdit(${t.id})">Edit</button>
-                    <button onclick="handleDelete(${t.id})">Delete</button>
-                    </td>
-                    `
-                tableBody.appendChild(row)
-            });
-        }
-        function handleDelete(id){
-            if(confirm("Delete this transaction?")){
-                deleteTransaction(id)
-                getTransactions()
-            }
-        }
-
-        // TODO: Fix undefined submitHandler 
-
-        function handleEdit(id){
-            const transactions = getTransactions()
-            const transaction = transactions.find(t => t.id === id)
-            if(!transaction) return
-
-            document.getElementById("type").value = transaction.type
-            document.getElementById("category").value = transaction.category;
-            document.getElementById("description").value = transaction.description;
-            document.getElementById("date").value = transaction.date;
-            document.getElementById("amount").value = transaction.amount;
-
-            //Temporarly remove submit handler 
-            form.removeEventListener("submit", submitHandler)
-            form.onsubmit = function(event){
-                event.preventDefault()
-                transaction.type = document.getElementById("type").value
-                transaction.category = document.getElementById("category").value.trim()
-                transaction.description = document.getElementById("description").value.trim()
-                transaction.date = document.getElementById("date").value
-                transaction.amount = parseFloat(document.getElementById("amount").value)
-                editTransaction(id, transaction)
-                form.reset()
-                getTransactions()
-                form.onsubmit = null
-            }
-        }
-    </script>
 </body>
 </html>
