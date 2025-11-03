@@ -1,0 +1,62 @@
+# Checklist
+Checklist to track our progress and requirements for each page.
+- Homepage - *Tyler Stanton*
+	- [x] Style CSS
+	- [ ] Simple Dashboard: (stretch goal?)
+		- [ ] Total expenses
+		- [ ] Total Income
+		- [ ] Current balance
+		- [ ] Quick link to add transaction.
+		- [ ] One or two budgets (near limit)
+	- [~] About/Promo Section
+- Transactions - *Jack Ellis*
+	- [ ] Add transaction form:
+		- [ ] Inputs:
+			- [ ] Type selector (income expense)
+			- [ ] Category (List existing, add new)
+			- [ ] Description (Optional)
+			- [ ] Date (calendar input or similar)
+			- [ ] Amount (currency format)
+		- [ ] Form validation.
+	- [ ] Simple table of Transactions. 
+	- [ ] Edit/Delete Existing transactions.
+	- [ ] CSS Styling.
+- Budgets - *Tomas Karounas*
+	- Budgets are linked to transactions via categories.
+	- [ ] Add budget form:
+		- [ ] Inputs:
+			- [ ] Category (list existing, add new.)
+			- [ ] Limit
+			- [ ] Description (Optional)
+		- [ ] Form Validation
+	- [ ] Edit/Delete budgets
+		- Categories having a budget is optional.
+		- Renaming may require cascading to transactions/categories.
+	- [ ] CSS Styling
+- Reports - *Clark Serecky*
+	- [ ] Transaction Table
+		- [ ] List all transactions.
+		- [ ] Current Balance (total income minus expenses).
+		- [ ] Filters: Date, Category, etc. (maybe as stretch goal)
+	- [ ] Charts
+		- [ ] By category or more.
+		- [ ] pie chart, bar chart. 
+	- [ ] Budgets
+		- [ ] Table or cards (up to how you want to do it.)
+		- [ ] Budget limit, spent, remaining balance.
+	- [ ] CSS Styling
+
+# Data Structures
+Details on how our data structures are supposed to work.
+- Data Structure details:
+	- Transactions, Budgets are **objects**. Saved to local storage as arrays of objects.
+	- Categories saved in an **array**.
+	- Transaction object: `{id: date.now(), type, category, amount, date, description}`
+		- ID using `date.now()` to id by the millisecond added.
+		- Default category: uncategorized.
+		- Description optional.
+	- Budget object: `{category, limit}`
+		- Create for an existing category or a new one. Required.
+	- Category array 
+		- For easy access by add forms for transaction and budget.
+		- Can be used on reports page for filtering.

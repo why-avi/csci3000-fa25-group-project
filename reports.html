@@ -3,201 +3,115 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <script src="https://unpkg.com/lucide@latest"></script>  <!-- Lucide Icons integration -->
+    <script src="js/storage.js"></script>
+    <script src="js/reports.js" defer></script>
+    <script src="js/main.js" defer></script>
     <title>Budget Tracker — Starter</title>
-
     <!-- Quick UI: Bootstrap for layout + simple styles -->
+    <link href="css/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-        body { padding: 2rem; }
-        .card { margin-bottom: 1rem; }
-        .table td, .table th { vertical-align: middle; }
-        .muted { color: #6c757d; font-size: .9rem; }
-    </style>
 </head>
 <body>
-    <div id="app" class="container">
-        <header class="mb-4">
-            <h1 class="h3">Budget Tracker — Starter</h1>
-            <p class="muted">Simple client-side prototype using Vue + localStorage. Use as a skeleton for integrating a backend later.</p>
-        </header>
+    <!-- Sidebar navigation -->
+     <div class="sidebar" id="sidebar">
+        <div class="sidebar-head">
+            <button class="menu-button" id="menu-button"><i data-lucide="menu"></i></button>
+            <div class="sidebar-title">
+                <i data-lucide="piggy-bank"></i>
+                <h1 class="sidebar-report">Budget Tracker</h1>            
+            </div>
+        </div>
+        <div class="sidebar-nav">
+            <a href="index.html"><i data-lucide="home"></i><span>Home</span></a> 
+            <a href="transactions.html"><i data-lucide="receipt"></i><span>Transactions</span></a> 
+            <a href="budgets.html"><i data-lucide="wallet"></i><span>Budgets</span></a> 
+            <a class="current" href="reports.html"><i data-lucide="chart-line"></i><span>Reports</span></a>
+        </div>
+    </div>
 
-        <!-- Summary -->
+                <!-- App root -->
+    <div id="app" class="main">
+        <div class="content">
         <div class="row mb-3">
             <div class="col-md-4">
                 <div class="card p-3">
                     <div>Total Income</div>
-                    <h3 class="mb-0 text-success">{{ formatCurrency(totalIncome) }}</h3>
+                    <h3 id="total-income" class="mb-0 text-success">$0.00</h3>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card p-3">
                     <div>Total Expenses</div>
-                    <h3 class="mb-0 text-danger">{{ formatCurrency(totalExpenses) }}</h3>
+                    <h3 id="total-expenses" class="mb-0 text-danger">$0.00</h3>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card p-3">
                     <div>Remaining (Income − Expenses)</div>
-                    <h3 class="mb-0" :class="remaining >= 0 ? 'text-primary' : 'text-danger'">{{ formatCurrency(remaining) }}</h3>
+                    <h3 id="remaining" class="mb-0 text-primary">$0.00</h3>
                 </div>
             </div>
         </div>
 
-        <!-- Controls -->
+        <!-- Reports View -->
         <div class="row">
-            <!-- Budgets -->
+            <!-- Budgets Summary -->
             <div class="col-lg-4">
                 <div class="card p-3">
-                    <h5>Budgets</h5>
-                    <form @submit.prevent="addBudget">
-                        <div class="mb-2">
-                            <input v-model="budgetForm.name" class="form-control" placeholder="Category (e.g., Groceries)" required>
-                        </div>
-                        <div class="mb-2">
-                            <input v-model.number="budgetForm.amount" class="form-control" type="number" min="0" step="0.01" placeholder="Monthly budget" required>
-                        </div>
-                        <div class="d-grid">
-                            <button class="btn btn-outline-primary btn-sm" type="submit">Add Budget</button>
-                        </div>
-                    </form>
-
+                    <h5>Budget Summary</h5>
                     <table class="table table-sm mt-3">
                         <thead>
-                            <tr><th>Category</th><th class="text-end">Amount</th><th></th></tr>
+                            <tr>
+                                <th>Category</th>
+                                <th class="text-end">Allocated</th>
+                                <th class="text-end">Remaining</th>
+                            </tr>
                         </thead>
-                        <tbody>
-                            <tr v-for="(b, i) in budgets" :key="b.id">
-                                <td>{{ b.name }}</td>
-                                <td class="text-end">{{ formatCurrency(b.amount) }}</td>
-                                <td class="text-end"><button class="btn btn-link btn-sm text-danger" @click="removeBudget(i)">Remove</button></td>
-                            </tr>
-                            <tr v-if="budgets.length===0"><td colspan="3" class="text-muted">No budgets yet</td></tr>
+                        <tbody id="budgets-tbody">
+                            <tr><td colspan="3" class="text-muted">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Incomes -->
+            <!-- Income Summary -->
             <div class="col-lg-4">
                 <div class="card p-3">
-                    <h5>Incomes</h5>
-                    <form @submit.prevent="addIncome">
-                        <div class="mb-2"><input v-model="incomeForm.source" class="form-control" placeholder="Source (e.g., Salary)" required></div>
-                        <div class="mb-2"><input v-model.number="incomeForm.amount" class="form-control" type="number" min="0" step="0.01" placeholder="Amount" required></div>
-                        <div class="d-grid"><button class="btn btn-outline-success btn-sm" type="submit">Add Income</button></div>
-                    </form>
-
+                    <h5>Income Summary</h5>
                     <table class="table table-sm mt-3">
-                        <thead><tr><th>Source</th><th class="text-end">Amount</th><th></th></tr></thead>
-                        <tbody>
-                            <tr v-for="(i,k) in incomes" :key="i.id">
-                                <td>{{ i.source }}</td>
-                                <td class="text-end">{{ formatCurrency(i.amount) }}</td>
-                                <td class="text-end"><button class="btn btn-link btn-sm text-danger" @click="removeIncome(k)">Remove</button></td>
-                            </tr>
-                            <tr v-if="incomes.length===0"><td colspan="3" class="text-muted">No incomes yet</td></tr>
+                        <thead><tr><th>Source</th><th class="text-end">Amount</th></tr></thead>
+                        <tbody id="incomes-tbody">
+                            <tr><td colspan="2" class="text-muted">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Expenses -->
+            <!-- Expense Summary -->
             <div class="col-lg-4">
                 <div class="card p-3">
-                    <h5>Expenses</h5>
-                    <form @submit.prevent="addExpense">
-                        <div class="mb-2"><input v-model="expenseForm.desc" class="form-control" placeholder="Description (e.g., Rent)" required></div>
-                        <div class="mb-2"><input v-model.number="expenseForm.amount" class="form-control" type="number" min="0" step="0.01" placeholder="Amount" required></div>
-                        <div class="d-grid"><button class="btn btn-outline-danger btn-sm" type="submit">Add Expense</button></div>
-                    </form>
-
+                    <h5>Expense Summary</h5>
                     <table class="table table-sm mt-3">
-                        <thead><tr><th>Description</th><th class="text-end">Amount</th><th></th></tr></thead>
-                        <tbody>
-                            <tr v-for="(e, idx) in expenses" :key="e.id">
-                                <td>{{ e.desc }}</td>
-                                <td class="text-end">{{ formatCurrency(e.amount) }}</td>
-                                <td class="text-end"><button class="btn btn-link btn-sm text-danger" @click="removeExpense(idx)">Remove</button></td>
-                            </tr>
-                            <tr v-if="expenses.length===0"><td colspan="3" class="text-muted">No expenses yet</td></tr>
+                        <thead><tr><th>Description</th><th class="text-end">Amount</th></tr></thead>
+                        <tbody id="expenses-tbody">
+                            <tr><td colspan="2" class="text-muted">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
+                        </div>
 
-        <footer class="mt-4 muted">
-            Prototype stores data in localStorage. For production, add validation, user accounts, and server-side persistence.
-        </footer>
-    </div>
+                    </div> <!-- .content -->
 
-    <!-- Vue 3 CDN -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-    <script>
-        const STORAGE_KEY = 'budget-tracker-v1';
+                    <footer>
+                        <p>Created by Clark Serecky, Jack Ellis, Tomas Karounas and Tyler Stanton | CSCI 3000 - 2025</p>
+                    </footer>
 
-        const app = {
-            data() {
-                return {
-                    budgets: [],
-                    incomes: [],
-                    expenses: [],
-                    budgetForm: { name: '', amount: null },
-                    incomeForm: { source: '', amount: null },
-                    expenseForm: { desc: '', amount: null }
-                };
-            },
-            computed: {
-                totalIncome() { return this.incomes.reduce((s, i) => s + Number(i.amount || 0), 0); },
-                totalExpenses() { return this.expenses.reduce((s, e) => s + Number(e.amount || 0), 0); },
-                remaining() { return this.totalIncome - this.totalExpenses; }
-            },
-            methods: {
-                formatCurrency(v) {
-                    return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(Number(v || 0));
-                },
-                save() {
-                    const payload = { budgets: this.budgets, incomes: this.incomes, expenses: this.expenses };
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-                },
-                load() {
-                    try {
-                        const raw = localStorage.getItem(STORAGE_KEY);
-                        if (!raw) return;
-                        const obj = JSON.parse(raw);
-                        this.budgets = obj.budgets || [];
-                        this.incomes = obj.incomes || [];
-                        this.expenses = obj.expenses || [];
-                    } catch (e) { console.warn('Failed to load state', e); }
-                },
-                uid(prefix = '') { return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2,8); },
+                </div> <!-- .main / #app -->
 
-                addBudget() {
-                    this.budgets.push({ id: this.uid('b_'), name: this.budgetForm.name.trim(), amount: Number(this.budgetForm.amount || 0) });
-                    this.budgetForm.name = ''; this.budgetForm.amount = null;
-                    this.save();
-                },
-                removeBudget(i) { this.budgets.splice(i,1); this.save(); },
+    <!-- Icon library (Lucide), storage helpers, reports logic, and main initializer -->
 
-                addIncome() {
-                    this.incomes.push({ id: this.uid('i_'), source: this.incomeForm.source.trim(), amount: Number(this.incomeForm.amount || 0) });
-                    this.incomeForm.source = ''; this.incomeForm.amount = null;
-                    this.save();
-                },
-                removeIncome(i) { this.incomes.splice(i,1); this.save(); },
-
-                addExpense() {
-                    this.expenses.push({ id: this.uid('e_'), desc: this.expenseForm.desc.trim(), amount: Number(this.expenseForm.amount || 0) });
-                    this.expenseForm.desc = ''; this.expenseForm.amount = null;
-                    this.save();
-                },
-                removeExpense(i) { this.expenses.splice(i,1); this.save(); }
-            },
-            mounted() { this.load(); }
-        };
-
-        Vue.createApp(app).mount('#app');
-    </script>
 </body>
 </html>
