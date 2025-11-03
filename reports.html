@@ -11,34 +11,44 @@
 
 </head>
 <body>
-    <div id="app" class="container">
-        <header class="mb-4">
-            <h1 class="h3">Budget Tracker — Starter</h1>
-            <div class="mt-2 d-flex gap-2">
-                <a href="index.html" class="btn btn-outline-primary btn-sm">Home</a>
-                <a href="transactions.html" class="btn btn-outline-secondary btn-sm">Transactions</a>
-                <a href="budgets.html" class="btn btn-outline-success btn-sm">Budgets</a>
+    <!-- Sidebar navigation -->
+     <div class="sidebar" id="sidebar">
+        <div class="sidebar-head">
+            <button class="menu-button" id="menu-button"><i data-lucide="menu"></i></button>
+            <div class="sidebar-title">
+                <i data-lucide="piggy-bank"></i>
+                <h1>Budget Tracker</h1>            
             </div>
-        </header>
+        </div>
+        <div class="sidebar-nav">
+            <a class="current" href="index.html"><i data-lucide="home"></i><span>Home</span></a> 
+            <a href="transactions.html"><i data-lucide="receipt"></i><span>Transactions</span></a> 
+            <a href="budgets.html"><i data-lucide="wallet"></i><span>Budgets</span></a> 
+            <a href="reports.html"><i data-lucide="chart-line"></i><span>Reports</span></a>
+        </div>
+    </div>
+            </div>
 
-        <!-- Summary -->
-        <div class="row mb-3">
+                <!-- Vue app root -->
+                <div id="app" class="main">
+
+                <div class="row mb-3">
             <div class="col-md-4">
                 <div class="card p-3">
                     <div>Total Income</div>
-                    <h3 class="mb-0 text-success">{{ formatCurrency(totalIncome) }}</h3>
+                    <h3 id="total-income" class="mb-0 text-success">$0.00</h3>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card p-3">
                     <div>Total Expenses</div>
-                    <h3 class="mb-0 text-danger">{{ formatCurrency(totalExpenses) }}</h3>
+                    <h3 id="total-expenses" class="mb-0 text-danger">$0.00</h3>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card p-3">
                     <div>Remaining (Income − Expenses)</div>
-                    <h3 class="mb-0" :class="remaining >= 0 ? 'text-primary' : 'text-danger'">{{ formatCurrency(remaining) }}</h3>
+                    <h3 id="remaining" class="mb-0 text-primary">$0.00</h3>
                 </div>
             </div>
         </div>
@@ -53,12 +63,8 @@
                         <thead>
                             <tr><th>Category</th><th class="text-end">Amount</th></tr>
                         </thead>
-                        <tbody>
-                            <tr v-for="b in budgets" :key="b.id">
-                                <td>{{ b.name }}</td>
-                                <td class="text-end">{{ formatCurrency(b.amount) }}</td>
-                            </tr>
-                            <tr v-if="budgets.length===0"><td colspan="2" class="text-muted">No budgets yet</td></tr>
+                        <tbody id="budgets-tbody">
+                            <tr><td colspan="2" class="text-muted">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -70,12 +76,8 @@
                     <h5>Income Summary</h5>
                     <table class="table table-sm mt-3">
                         <thead><tr><th>Source</th><th class="text-end">Amount</th></tr></thead>
-                        <tbody>
-                            <tr v-for="i in incomes" :key="i.id">
-                                <td>{{ i.source }}</td>
-                                <td class="text-end">{{ formatCurrency(i.amount) }}</td>
-                            </tr>
-                            <tr v-if="incomes.length===0"><td colspan="2" class="text-muted">No incomes yet</td></tr>
+                        <tbody id="incomes-tbody">
+                            <tr><td colspan="2" class="text-muted">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -87,12 +89,8 @@
                     <h5>Expense Summary</h5>
                     <table class="table table-sm mt-3">
                         <thead><tr><th>Description</th><th class="text-end">Amount</th></tr></thead>
-                        <tbody>
-                            <tr v-for="e in expenses" :key="e.id">
-                                <td>{{ e.desc }}</td>
-                                <td class="text-end">{{ formatCurrency(e.amount) }}</td>
-                            </tr>
-                            <tr v-if="expenses.length===0"><td colspan="2" class="text-muted">No expenses yet</td></tr>
+                        <tbody id="expenses-tbody">
+                            <tr><td colspan="2" class="text-muted">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -102,72 +100,10 @@
         
     </div>
 
-    <!-- Vue 3 CDN -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-    <script>
-        const STORAGE_KEY = 'budget-tracker-v1';
-
-        const app = {
-            data() {
-                return {
-                    budgets: [],
-                    incomes: [],
-                    expenses: [],
-                    budgetForm: { name: '', amount: null },
-                    incomeForm: { source: '', amount: null },
-                    expenseForm: { desc: '', amount: null }
-                };
-            },
-            computed: {
-                totalIncome() { return this.incomes.reduce((s, i) => s + Number(i.amount || 0), 0); },
-                totalExpenses() { return this.expenses.reduce((s, e) => s + Number(e.amount || 0), 0); },
-                remaining() { return this.totalIncome - this.totalExpenses; }
-            },
-            methods: {
-                formatCurrency(v) {
-                    return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(Number(v || 0));
-                },
-                save() {
-                    const payload = { budgets: this.budgets, incomes: this.incomes, expenses: this.expenses };
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-                },
-                load() {
-                    try {
-                        const raw = localStorage.getItem(STORAGE_KEY);
-                        if (!raw) return;
-                        const obj = JSON.parse(raw);
-                        this.budgets = obj.budgets || [];
-                        this.incomes = obj.incomes || [];
-                        this.expenses = obj.expenses || [];
-                    } catch (e) { console.warn('Failed to load state', e); }
-                },
-                uid(prefix = '') { return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2,8); },
-
-                addBudget() {
-                    this.budgets.push({ id: this.uid('b_'), name: this.budgetForm.name.trim(), amount: Number(this.budgetForm.amount || 0) });
-                    this.budgetForm.name = ''; this.budgetForm.amount = null;
-                    this.save();
-                },
-                removeBudget(i) { this.budgets.splice(i,1); this.save(); },
-
-                addIncome() {
-                    this.incomes.push({ id: this.uid('i_'), source: this.incomeForm.source.trim(), amount: Number(this.incomeForm.amount || 0) });
-                    this.incomeForm.source = ''; this.incomeForm.amount = null;
-                    this.save();
-                },
-                removeIncome(i) { this.incomes.splice(i,1); this.save(); },
-
-                addExpense() {
-                    this.expenses.push({ id: this.uid('e_'), desc: this.expenseForm.desc.trim(), amount: Number(this.expenseForm.amount || 0) });
-                    this.expenseForm.desc = ''; this.expenseForm.amount = null;
-                    this.save();
-                },
-                removeExpense(i) { this.expenses.splice(i,1); this.save(); }
-            },
-            mounted() { this.load(); }
-        };
-
-        Vue.createApp(app).mount('#app');
-    </script>
+    <!-- Icon library (Lucide), storage helpers, reports logic, and main initializer -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/lucide.min.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/reports.js" defer></script>
+    <script src="js/main.js" defer></script>
 </body>
 </html>
