@@ -38,13 +38,31 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (budgetsTbody) {
 			budgetsTbody.innerHTML = '';
 			if (budgets.length === 0) {
-				budgetsTbody.innerHTML = '<tr><td colspan="2" class="text-muted">No budgets yet</td></tr>';
+				budgetsTbody.innerHTML = '<tr><td colspan="3" class="text-muted">No budgets yet</td></tr>';
 			} else {
 				budgets.forEach(b => {
 					const tr = document.createElement('tr');
-					const name = b.category ?? b.name ?? 'Unnamed';
-					const amount = b.limit ?? b.amount ?? 0;
-					tr.innerHTML = `<td>${escapeHtml(name)}</td><td class="text-end">${formatCurrency(amount)}</td>`;
+					const category = b.category ?? b.name ?? 'Unnamed';
+					const limit = Number(b.limit ?? b.amount ?? 0);
+
+					// compute spent from transactions matching this category
+					const spent = transactions
+						.filter(t => t.type === 'expense' && String((t.category||'')).trim().toLowerCase() === String(category).trim().toLowerCase())
+						.reduce((s, t) => s + Number(t.amount || 0), 0);
+
+					const remaining = limit - spent;
+					const pct = limit > 0 ? Math.min(100, Math.round((spent / limit) * 100)) : (spent > 0 ? 100 : 0);
+
+					tr.innerHTML = `
+						<td>${escapeHtml(category)}</td>
+						<td class="text-end">${formatCurrency(limit)}</td>
+						<td class="text-end ${remaining >= 0 ? 'text-success' : 'text-danger'}">
+							${formatCurrency(remaining)}
+							<div class="progress mt-1" style="height:6px">
+								<div class="progress-bar ${remaining >= 0 ? '' : 'bg-danger'}" role="progressbar" style="width:${pct}%" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"></div>
+							</div>
+						</td>
+					`;
 					budgetsTbody.appendChild(tr);
 				});
 			}

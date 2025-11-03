@@ -27,12 +27,12 @@
             <a href="reports.html"><i data-lucide="chart-line"></i><span>Reports</span></a>
         </div>
     </div>
-            </div>
 
-                <!-- Vue app root -->
+                <!-- App root -->
                 <div id="app" class="main">
+                    <div class="content">
 
-                <div class="row mb-3">
+                        <div class="row mb-3">
             <div class="col-md-4">
                 <div class="card p-3">
                     <div>Total Income</div>
@@ -61,10 +61,14 @@
                     <h5>Budget Summary</h5>
                     <table class="table table-sm mt-3">
                         <thead>
-                            <tr><th>Category</th><th class="text-end">Amount</th></tr>
+                            <tr>
+                                <th>Category</th>
+                                <th class="text-end">Allocated</th>
+                                <th class="text-end">Remaining</th>
+                            </tr>
                         </thead>
                         <tbody id="budgets-tbody">
-                            <tr><td colspan="2" class="text-muted">Loading...</td></tr>
+                            <tr><td colspan="3" class="text-muted">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -95,10 +99,15 @@
                     </table>
                 </div>
             </div>
-        </div>
+                        </div>
 
-        
-    </div>
+                    </div> <!-- .content -->
+
+                    <footer>
+                        <p>Created by Clark Serecky, Jack Ellis, Tomas Karounas and Tyler Stanton | CSCI 3000 - 2025</p>
+                    </footer>
+
+                </div> <!-- .main / #app -->
 
     <!-- Icon library (Lucide), storage helpers, reports logic, and main initializer -->
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/lucide.min.js"></script>
