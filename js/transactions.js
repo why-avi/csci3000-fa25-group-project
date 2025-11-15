@@ -1,15 +1,60 @@
 // DOM and Event Logic
         const form = document.getElementById("transactionForm")
         const tableBody = document.getElementById("transactionTableBody")
-        //Load all transactions 
+        const balanceEL = document.getElementById("balance")
+        const categorySelect = document.getElementById("category")
+        //Categories
+        function loadCategories(){
+            let categories = getCategories()
+
+            //clear exsisting
+            categorySelect.innerHTML = ""
+
+            //placeholder
+            const placeholder = document.createElement("option")
+            placeholder.value = ""
+            placeholder.textContent = "--Select Category--"
+            placeholder.disabled = true
+            placeholder.selected = true
+            categorySelect.appendChild(placeholder)
+            //add categories from storage
+            categories.forEach(cat => {
+                const option = document.createElement("option")
+                option.value = cat
+                option.textContent = cat
+                categorySelect.appendChild(option)
+            })
+
+            const addNew = document.createElement("option")
+            addNew.value = "__add_new__"
+            addNew.textContent = "Add new category..."
+            categorySelect.appendChild(addNew)
+        }
+          
+
+        categorySelect.addEventListener("change", ()=> {
+            if (categorySelect.value === "__add_new__") {
+                const newCat = prompt("Enter new category name:")
+                if (newCat && newCat.trim() !== "") {
+                    addCategory(newCat.trim())
+                    loadCategories()
+                    categorySelect.value = newCat.trim()
+                } else {
+                    categorySelect.value = "" // Reset
+                }
+            }
+        })
+
         function loadTransactions() {
             const transactions = getTransactions()
             tableBody.innerHTML = ""
 
             if (transactions.length === 0 ){
                 tableBody.innerHTML = "<tr><td colspan='6'>No transactions yet.</td></tr>"
-                return
+                updateBalance()
+                return;
             }
+
             transactions.forEach(t => {
                 const row = document.createElement("tr")
                 row.innerHTML = `
@@ -19,12 +64,24 @@
                     <td>${t.date}</td>
                     <td>$${t.amount.toFixed(2)}</td>
                     <td class="actions">
-                    <button class="editButton" onclick="handleEdit(${t.id})">Edit</button>
-                    <button class="deleteButton" onclick="handleDelete(${t.id})">Delete</button>
+                        <button class="editButton" onclick="handleEdit(${t.id})">Edit</button>
+                        <button class="deleteButton" onclick="handleDelete(${t.id})">Delete</button>
                     </td>
-                    `
+                `
                 tableBody.appendChild(row)
-            });
+            }); 
+                updateBalance()
+        }
+
+        //update balance function 
+        function updateBalance(){
+            const transactions = getTransactions()
+            let balance = 0
+
+            transactions.forEach(t => {
+                balance += t.type === "income" ? t.amount : -t.amount;
+            })
+            balanceEL.textContent = balance.toFixed(2)
         }
         function handleDelete(id){
             if(confirm("Delete this transaction?")){
@@ -87,4 +144,7 @@
             }
         }
         form.addEventListener("submit", submitHandler)
-        document.addEventListener("DOMContentLoaded", loadTransactions)
+        document.addEventListener("DOMContentLoaded", () => {
+            loadCategories()
+            loadTransactions()
+        })
