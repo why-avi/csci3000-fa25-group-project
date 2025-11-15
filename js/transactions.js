@@ -19,8 +19,8 @@
                     <td>${t.date}</td>
                     <td>$${t.amount.toFixed(2)}</td>
                     <td class="actions">
-                    <button onclick="handleEdit(${t.id})">Edit</button>
-                    <button onclick="handleDelete(${t.id})">Delete</button>
+                    <button class="editButton" onclick="handleEdit(${t.id})">Edit</button>
+                    <button class="deleteButton" onclick="handleDelete(${t.id})">Delete</button>
                     </td>
                     `
                 tableBody.appendChild(row)

@@ -44,13 +44,13 @@ document.addEventListener("DOMContentLoaded", () => {
       li.innerHTML = `
         <strong>${b.category}</strong> — $${b.limit.toFixed(2)}
         <br><small>${b.description || ""}</small>
-        <button class="delete-btn" data-id="${b.id}">🗑 Delete</button>
+        <button class="deleteButton" data-id="${b.id}">Delete</button>
       `;
       list.appendChild(li);
     });
 
     // Attach delete events
-    document.querySelectorAll(".delete-btn").forEach(btn => {
+    document.querySelectorAll(".deleteButton").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = Number(btn.dataset.id);
         deleteBudget(id);
