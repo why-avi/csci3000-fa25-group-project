@@ -3,13 +3,44 @@
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("budget-form");
   const list = document.getElementById("budget-list");
+  const categorySelect = document.getElementById("budget-category");
+  const newCategoryInput = document.getElementById("new-category");
+  const addCategoryBtn = document.getElementById("add-category-btn");
 
+  // Load budgets and categories on page load
   renderBudgets();
+  renderCategories();
 
+  // Event Add new category
+  addCategoryBtn.addEventListener("click", () => {
+    const newCategory = newCategoryInput.value.trim();
+    if (!newCategory) return;
+
+    let categories = getCategories(); // get from storage.js
+    if (!categories.includes(newCategory)) {
+      categories.push(newCategory);
+      saveCategories(categories); // save back to local storage
+      renderCategories();
+      newCategoryInput.value = "";
+    }
+  });
+
+  function renderCategories() {
+    const categories = getCategories(); // array of strings
+    categorySelect.innerHTML = "";
+    categories.forEach(cat => {
+      const option = document.createElement("option");
+      option.value = cat;
+      option.textContent = cat;
+      categorySelect.appendChild(option);
+    });
+  }
+
+  // Event Submit budget form
   form.addEventListener("submit", e => {
     e.preventDefault();
 
-    const category = document.getElementById("budget-category").value.trim();
+    const category = categorySelect.value; // now from select
     const limit = Number(document.getElementById("budget-limit").value);
     const description = document.getElementById("budget-description").value.trim();
 
